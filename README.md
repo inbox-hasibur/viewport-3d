@@ -1,6 +1,6 @@
 # 🧊 Viewport 3D - Interactive 3D Scene Builder
 
-📍 **Live Demo:** [https://viewport-3d.vercel.app](https://viewport-3d.vercel.app/https://viewport-3d.vercel.app/)
+📍 **Live Demo:** https://viewport-3d.vercel.app
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js) ![React Three Fiber](https://img.shields.io/badge/React_Three_Fiber-3D-blue?style=for-the-badge&logo=react) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css) ![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?style=for-the-badge&logo=mongodb)
 

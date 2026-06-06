@@ -16,6 +16,7 @@ export default function DashboardPage() {
   const [objects, setObjects] = useState<SceneObject[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingScene, setIsLoadingScene] = useState(true);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -44,6 +45,7 @@ export default function DashboardPage() {
 
   const handleSaveScene = async () => {
     setIsSaving(true);
+    setSaveStatus('idle');
     try {
       const res = await fetch('/api/scene', {
         method: 'POST',
@@ -51,13 +53,16 @@ export default function DashboardPage() {
         body: JSON.stringify({ objects }),
       });
       if (res.ok) {
-        alert('Scene saved successfully!');
+        setSaveStatus('success');
+        setTimeout(() => setSaveStatus('idle'), 3000);
       } else {
-        alert('Failed to save scene.');
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus('idle'), 3000);
       }
     } catch (error) {
       console.error('Error saving scene:', error);
-      alert('Error saving scene.');
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 3000);
     } finally {
       setIsSaving(false);
     }
@@ -92,14 +97,27 @@ export default function DashboardPage() {
     <div className="h-screen w-screen relative overflow-hidden">
       {/* UI Overlay */}
       <div className="absolute top-0 left-0 w-full p-6 z-10 flex justify-between items-start pointer-events-none">
-        <button 
-          className="px-6 py-2.5 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 transition-colors shadow-lg border-2 border-black pointer-events-auto flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={handleSaveScene}
-          disabled={isSaving}
-        >
-          {isSaving ? 'Saving...' : 'Save'}
-          {!isSaving && <span className="text-xl leading-none">›</span>}
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            className="px-6 py-2.5 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 transition-colors shadow-lg border-2 border-black pointer-events-auto flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handleSaveScene}
+            disabled={isSaving}
+          >
+            {isSaving ? 'Saving...' : 'Save'}
+            {!isSaving && <span className="text-xl leading-none">›</span>}
+          </button>
+          
+          {saveStatus === 'success' && (
+            <span className="text-green-400 font-bold bg-black/50 px-3 py-1 rounded-full animate-pulse">
+              ✓ Saved
+            </span>
+          )}
+          {saveStatus === 'error' && (
+            <span className="text-red-400 font-bold bg-black/50 px-3 py-1 rounded-full animate-pulse">
+              ✗ Error
+            </span>
+          )}
+        </div>
 
         <div className="relative pointer-events-auto">
           <button 

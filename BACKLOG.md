@@ -44,4 +44,3 @@ Goal: Project finishing, minor bug fixes, and going live.
 Tasks:
 - Improve User Experience (UX) and add loading states (Loading spinners).
 - Refactor and clean up the entire code.
-- Deploy the project live on Vercel or any other free hosting.

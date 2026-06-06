@@ -40,6 +40,12 @@ export default function DashboardPage() {
     setIsDialogOpen(false);
   };
 
+  const handleUpdateObject = (id: string, position: [number, number, number]) => {
+    setObjects((prev) =>
+      prev.map((obj) => (obj.id === id ? { ...obj, position } : obj))
+    );
+  };
+
   return (
     <div className="h-screen w-screen relative overflow-hidden">
       {/* UI Overlay */}
@@ -138,7 +144,7 @@ export default function DashboardPage() {
 
       {/* 3D Canvas */}
       <div className="h-full w-full bg-[#2a2a2a]">
-        <Scene objects={objects} />
+        <Scene objects={objects} onUpdateObject={handleUpdateObject} />
       </div>
     </div>
   );

@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧊 Viewport 3D - Interactive 3D Scene Builder
 
-## Getting Started
+📍 **Live Demo:** [https://viewport-3d-3yheyeukx-hasibur-rahmans-projects-cd25a5c5.vercel.app](https://viewport-3d-3yheyeukx-hasibur-rahmans-projects-cd25a5c5.vercel.app)
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js) ![React Three Fiber](https://img.shields.io/badge/React_Three_Fiber-3D-blue?style=for-the-badge&logo=react) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css) ![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?style=for-the-badge&logo=mongodb)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Viewport 3D is a modern, interactive web application that allows users to create, manipulate, and save custom 3D environments directly in their browser. Built with Next.js and React Three Fiber, it provides a seamless and optimized 3D building experience.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✨ Key Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🎮 Interactive 3D Canvas
+*   **Dynamic Object Spawning:** Easily add basic shapes (Cubes, Spheres) and custom 3D models (.glb/.gltf) to the scene.
+*   **Drag & Drop:** Intuitively move objects around the 3D space using mouse controls.
+*   **Visual Feedback:** Real-time visual effects (emissive glow) when hovering and dragging objects for better UX.
 
-## Learn More
+### 💾 Persistent Scenes
+*   **Database Integration:** Save your custom 3D scene layouts to MongoDB.
+*   **Auto-Load:** Your saved environment automatically loads the next time you log in to your dashboard.
+*   **Real-time Save Status:** Visual indicators to confirm successful data sync.
 
-To learn more about Next.js, take a look at the following resources:
+### 🔒 Secure Authentication
+*   **NextAuth.js:** Secure login and signup system to protect user data and ensure each user has their own personal 3D workspace.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Tech Stack
 
-## Deploy on Vercel
+*   **Frontend:** [Next.js 15](https://nextjs.org/) (App Router), [Tailwind CSS](https://tailwindcss.com/)
+*   **3D Rendering:** [Three.js](https://threejs.org/), [@react-three/fiber](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction), [@react-three/drei](https://github.com/pmndrs/drei)
+*   **Backend/Database:** API Routes (Next.js), [MongoDB Atlas](https://www.mongodb.com/atlas) with Mongoose
+*   **Authentication:** [NextAuth.js](https://next-auth.js.org/) (Credentials Provider)
+*   **Deployment:** [Vercel](https://vercel.com/)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚀 Getting Started
+
+### Prerequisites
+Make sure you have Node.js and npm installed on your machine. You will also need a MongoDB Atlas connection string.
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/viewport-3d.git
+   cd viewport-3d
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Set up Environment Variables:**
+   Create a `.env.local` file in the root directory and add the following:
+   ```env
+   MONGODB_URI=your_mongodb_connection_string
+   NEXTAUTH_SECRET=your_super_secret_key
+   NEXTAUTH_URL=http://localhost:3000
+   ```
+
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser:**
+   Navigate to [http://localhost:3000](http://localhost:3000) to see the application in action.

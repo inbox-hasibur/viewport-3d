@@ -1,7 +1,7 @@
 'use client';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid, Environment, useGLTF, DragControls } from '@react-three/drei';
-import { Suspense, useState, useRef } from 'react';
+import { Suspense, useState, useRef, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
 
 // Type definition for our 3D objects
@@ -12,15 +12,94 @@ export type SceneObject = {
 };
 
 // Component for Custom Model 1 (Duck)
-const CustomModel1 = () => {
+const CustomModel1 = ({ isDragged, isHovered }: { isDragged: boolean, isHovered: boolean }) => {
   const { scene } = useGLTF('/models/custom1.glb');
-  return <primitive object={scene.clone()} scale={0.5} castShadow />;
+  const clone = useMemo(() => scene.clone(true), [scene]);
+  
+  useEffect(() => {
+    clone.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        
+        // Clone material once per instance to avoid sharing between multiple objects
+        if (!mesh.userData.hasClonedMaterial) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material = mesh.material.map(m => m.clone());
+          } else {
+            mesh.material = mesh.material.clone();
+          }
+          mesh.userData.hasClonedMaterial = true;
+        }
+
+        const applyEffect = (mat: THREE.Material) => {
+          const standardMat = mat as THREE.MeshStandardMaterial;
+          if (isDragged) {
+            standardMat.emissive = new THREE.Color("#888888");
+            standardMat.emissiveIntensity = 1.0; // increased visual effect
+          } else if (isHovered) {
+            standardMat.emissive = new THREE.Color("#444444");
+            standardMat.emissiveIntensity = 0.5;
+          } else {
+            standardMat.emissive = new THREE.Color("#000000");
+            standardMat.emissiveIntensity = 0;
+          }
+        };
+
+        if (Array.isArray(mesh.material)) {
+          mesh.material.forEach(applyEffect);
+        } else {
+          applyEffect(mesh.material);
+        }
+      }
+    });
+  }, [clone, isDragged, isHovered]);
+  
+  return <primitive object={clone} scale={0.5} castShadow />;
 };
 
 // Component for Custom Model 2 (Avocado)
-const CustomModel2 = () => {
+const CustomModel2 = ({ isDragged, isHovered }: { isDragged: boolean, isHovered: boolean }) => {
   const { scene } = useGLTF('/models/custom2.glb');
-  return <primitive object={scene.clone()} scale={15} castShadow />;
+  const clone = useMemo(() => scene.clone(true), [scene]);
+  
+  useEffect(() => {
+    clone.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        
+        if (!mesh.userData.hasClonedMaterial) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material = mesh.material.map(m => m.clone());
+          } else {
+            mesh.material = mesh.material.clone();
+          }
+          mesh.userData.hasClonedMaterial = true;
+        }
+
+        const applyEffect = (mat: THREE.Material) => {
+          const standardMat = mat as THREE.MeshStandardMaterial;
+          if (isDragged) {
+            standardMat.emissive = new THREE.Color("#888888");
+            standardMat.emissiveIntensity = 1.0; // increased visual effect
+          } else if (isHovered) {
+            standardMat.emissive = new THREE.Color("#444444");
+            standardMat.emissiveIntensity = 0.5;
+          } else {
+            standardMat.emissive = new THREE.Color("#000000");
+            standardMat.emissiveIntensity = 0;
+          }
+        };
+
+        if (Array.isArray(mesh.material)) {
+          mesh.material.forEach(applyEffect);
+        } else {
+          applyEffect(mesh.material);
+        }
+      }
+    });
+  }, [clone, isDragged, isHovered]);
+
+  return <primitive object={clone} scale={15} castShadow />;
 };
 
 // Preload models for better performance
@@ -34,14 +113,19 @@ const ObjectRenderer = ({ obj, onUpdate }: { obj: SceneObject; onUpdate: (id: st
   const groupRef = useRef<THREE.Group>(null);
 
   // Visual feedback on hover and drag
-  const scaleMultiplier = dragged ? 1.2 : hovered ? 1.1 : 1;
+  // Kept original size when dragged to prevent alignment issues
+  const scaleMultiplier = dragged ? 1 : hovered ? 1.05 : 1;
 
   const renderContent = () => {
     if (obj.type === 'cube') {
       return (
         <mesh castShadow receiveShadow>
           <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color={dragged ? "#60a5fa" : (hovered ? "#2563eb" : "#3b82f6")} />
+          <meshStandardMaterial 
+            color={dragged ? "#93c5fd" : (hovered ? "#60a5fa" : "#3b82f6")} 
+            emissive={dragged ? "#3b82f6" : (hovered ? "#1e3a8a" : "#000000")}
+            emissiveIntensity={dragged ? 0.5 : (hovered ? 0.2 : 0)}
+          />
         </mesh>
       );
     }
@@ -49,12 +133,16 @@ const ObjectRenderer = ({ obj, onUpdate }: { obj: SceneObject; onUpdate: (id: st
       return (
         <mesh castShadow receiveShadow>
           <sphereGeometry args={[0.6, 32, 32]} />
-          <meshStandardMaterial color={dragged ? "#f87171" : (hovered ? "#dc2626" : "#ef4444")} />
+          <meshStandardMaterial 
+            color={dragged ? "#fca5a5" : (hovered ? "#f87171" : "#ef4444")} 
+            emissive={dragged ? "#ef4444" : (hovered ? "#7f1d1d" : "#000000")}
+            emissiveIntensity={dragged ? 0.5 : (hovered ? 0.2 : 0)}
+          />
         </mesh>
       );
     }
-    if (obj.type === 'custom1') return <CustomModel1 />;
-    if (obj.type === 'custom2') return <CustomModel2 />;
+    if (obj.type === 'custom1') return <CustomModel1 isDragged={dragged} isHovered={hovered} />;
+    if (obj.type === 'custom2') return <CustomModel2 isDragged={dragged} isHovered={hovered} />;
     return null;
   };
 

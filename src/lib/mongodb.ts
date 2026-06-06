@@ -1,19 +1,18 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || "";
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/viewport3d';
 
 if (!MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
+  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
 }
 
-// কানেকশন ক্যাশ করার জন্য গ্লোবাল অবজেক্ট ব্যবহার (Next.js এর হট-রিলোড ক্র্যাশ এড়াতে)
 let cached = (global as any).mongoose;
 
 if (!cached) {
   cached = (global as any).mongoose = { conn: null, promise: null };
 }
 
-export const connectDB = async () => {
+async function connectToDatabase() {
   if (cached.conn) {
     return cached.conn;
   }
@@ -23,18 +22,12 @@ export const connectDB = async () => {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
-      console.log("=> MongoDB Connected Successfully 🎉");
-      return mongooseInstance;
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+      return mongoose;
     });
   }
-
-  try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    throw e;
-  }
-
+  cached.conn = await cached.promise;
   return cached.conn;
-};
+}
+
+export default connectToDatabase;

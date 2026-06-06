@@ -14,14 +14,56 @@ export default function DashboardPage() {
   
   // State to hold all 3D objects in the scene
   const [objects, setObjects] = useState<SceneObject[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoadingScene, setIsLoadingScene] = useState(true);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
+    } else if (status === 'authenticated') {
+      // Fetch the user's saved scene
+      const fetchScene = async () => {
+        try {
+          const res = await fetch('/api/scene');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.objects) {
+              setObjects(data.objects);
+            }
+          }
+        } catch (error) {
+          console.error('Failed to load scene', error);
+        } finally {
+          setIsLoadingScene(false);
+        }
+      };
+      
+      fetchScene();
     }
   }, [status, router]);
 
-  if (status === 'loading') {
+  const handleSaveScene = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/scene', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ objects }),
+      });
+      if (res.ok) {
+        alert('Scene saved successfully!');
+      } else {
+        alert('Failed to save scene.');
+      }
+    } catch (error) {
+      console.error('Error saving scene:', error);
+      alert('Error saving scene.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (status === 'loading' || (status === 'authenticated' && isLoadingScene)) {
     return <div className="h-screen flex items-center justify-center bg-gray-900 text-white">Loading...</div>;
   }
 
@@ -51,11 +93,12 @@ export default function DashboardPage() {
       {/* UI Overlay */}
       <div className="absolute top-0 left-0 w-full p-6 z-10 flex justify-between items-start pointer-events-none">
         <button 
-          className="px-6 py-2.5 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 transition-colors shadow-lg border-2 border-black pointer-events-auto flex items-center gap-2"
-          onClick={() => console.log('Saving scene...', objects)}
+          className="px-6 py-2.5 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 transition-colors shadow-lg border-2 border-black pointer-events-auto flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={handleSaveScene}
+          disabled={isSaving}
         >
-          Save
-          <span className="text-xl leading-none">›</span>
+          {isSaving ? 'Saving...' : 'Save'}
+          {!isSaving && <span className="text-xl leading-none">›</span>}
         </button>
 
         <div className="relative pointer-events-auto">

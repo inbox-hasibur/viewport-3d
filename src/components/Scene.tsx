@@ -116,6 +116,9 @@ const ObjectRenderer = ({ obj, onUpdate }: { obj: SceneObject; onUpdate: (id: st
   // Kept original size when dragged to prevent alignment issues
   const scaleMultiplier = dragged ? 1 : hovered ? 1.05 : 1;
 
+  // Store initial position to prevent React from overriding DragControls' transformations on re-render
+  const [initialPos] = useState(obj.position);
+
   const renderContent = () => {
     if (obj.type === 'cube') {
       return (
@@ -152,18 +155,22 @@ const ObjectRenderer = ({ obj, onUpdate }: { obj: SceneObject; onUpdate: (id: st
         setDragged(true);
         document.body.style.cursor = 'grabbing';
       }}
-      onDragEnd={() => {
+      onDragEnd={(e) => {
         setDragged(false);
         document.body.style.cursor = hovered ? 'grab' : 'auto';
+        
+        // DragControls from drei modifies the matrixWorld. 
+        // To get the actual updated position, we need to decompose the matrix.
         if (groupRef.current) {
-          const pos = groupRef.current.position;
-          onUpdate(obj.id, [pos.x, pos.y, pos.z]);
+          const position = new THREE.Vector3();
+          groupRef.current.matrixWorld.decompose(position, new THREE.Quaternion(), new THREE.Vector3());
+          onUpdate(obj.id, [position.x, position.y, position.z]);
         }
       }}
     >
       <group
         ref={groupRef}
-        position={obj.position}
+        position={initialPos}
         scale={scaleMultiplier}
         onPointerOver={(e) => {
           e.stopPropagation();

@@ -155,7 +155,7 @@ const ObjectRenderer = ({ obj, onUpdate }: { obj: SceneObject; onUpdate: (id: st
         setDragged(true);
         document.body.style.cursor = 'grabbing';
       }}
-      onDragEnd={(e) => {
+      onDragEnd={() => {
         setDragged(false);
         document.body.style.cursor = hovered ? 'grab' : 'auto';
         

@@ -31,92 +31,103 @@ export default function DashboardPage() {
   return (
     <div className="h-screen w-screen relative overflow-hidden">
       {/* UI Overlay */}
-      <div className="absolute top-0 left-0 w-full p-4 z-10 flex justify-between items-center bg-gradient-to-b from-black/50 to-transparent pointer-events-none">
-        <div className="text-white font-bold text-xl pointer-events-auto">
+      <div className="absolute top-0 left-0 w-full p-6 z-10 flex justify-between items-start pointer-events-none">
+        <button 
+          className="px-6 py-2.5 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 transition-colors shadow-lg border-2 border-black pointer-events-auto flex items-center gap-2"
+          onClick={() => console.log('Saving scene...')}
+        >
+          Save
+          <span className="text-xl leading-none">›</span>
+        </button>
+
+        <div className="relative pointer-events-auto">
+          <button 
+            onClick={() => setIsDialogOpen(!isDialogOpen)}
+            className="px-6 py-2.5 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 transition-colors shadow-lg border-2 border-black flex items-center gap-2"
+          >
+            <span className="text-xl leading-none">‹</span>
+            Add Object
+          </button>
+
+          {/* Add Object Dialog - Positioned relative to the Add Object button */}
+          {isDialogOpen && (
+            <div className="absolute top-14 right-0 mt-2 bg-white p-6 rounded-3xl shadow-xl w-64 border-2 border-gray-100">
+              <h3 className="text-lg font-bold mb-4 text-black">Add Object</h3>
+              
+              <div className="space-y-4 mb-6">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    name="objectType" 
+                    value="cube" 
+                    checked={selectedType === 'cube'}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                    className="w-5 h-5 text-black focus:ring-black accent-black"
+                  />
+                  <span className="text-black font-medium">Cube</span>
+                </label>
+                
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    name="objectType" 
+                    value="sphere" 
+                    checked={selectedType === 'sphere'}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                    className="w-5 h-5 text-black focus:ring-black accent-black"
+                  />
+                  <span className="text-black font-medium">Sphere</span>
+                </label>
+
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    name="objectType" 
+                    value="custom1" 
+                    checked={selectedType === 'custom1'}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                    className="w-5 h-5 text-black focus:ring-black accent-black"
+                  />
+                  <span className="text-black font-medium">Custom model 1</span>
+                </label>
+                
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    name="objectType" 
+                    value="custom2" 
+                    checked={selectedType === 'custom2'}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                    className="w-5 h-5 text-black focus:ring-black accent-black"
+                  />
+                  <span className="text-black font-medium">Custom model 2</span>
+                </label>
+              </div>
+
+              <div className="flex justify-center">
+                <button 
+                  onClick={handleAddObject}
+                  className="px-8 py-2 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 w-3/4"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom Left Logo/Title */}
+      <div className="absolute bottom-6 left-6 z-10 pointer-events-none">
+        <h1 className="text-white text-2xl font-bold tracking-tight">
           3D Viewport
-        </div>
-        <div className="flex gap-4 pointer-events-auto">
-          <button 
-            onClick={() => setIsDialogOpen(true)}
-            className="px-4 py-2 bg-white text-black rounded-md font-medium hover:bg-gray-200 transition-colors shadow-lg"
-          >
-            Add Objects
-          </button>
-          <button 
-            className="px-4 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors shadow-lg"
-            onClick={() => console.log('Saving scene...')}
-          >
-            Save
-          </button>
-        </div>
+        </h1>
       </div>
 
       {/* 3D Canvas */}
-      <div className="h-full w-full">
+      <div className="h-full w-full bg-[#2a2a2a]">
         <Scene />
       </div>
-
-      {/* Add Object Dialog */}
-      {isDialogOpen && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-80 max-w-[90%]">
-            <h3 className="text-xl font-bold mb-4 text-gray-900">Add Object</h3>
-            
-            <div className="space-y-3 mb-6">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="objectType" 
-                  value="cube" 
-                  checked={selectedType === 'cube'}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-4 h-4 text-black focus:ring-black"
-                />
-                <span className="text-gray-700">Cube</span>
-              </label>
-              
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="objectType" 
-                  value="sphere" 
-                  checked={selectedType === 'sphere'}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-4 h-4 text-black focus:ring-black"
-                />
-                <span className="text-gray-700">Sphere</span>
-              </label>
-
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="objectType" 
-                  value="custom" 
-                  checked={selectedType === 'custom'}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-4 h-4 text-black focus:ring-black"
-                />
-                <span className="text-gray-700">Custom Model</span>
-              </label>
-            </div>
-
-            <div className="flex justify-end gap-3">
-              <button 
-                onClick={() => setIsDialogOpen(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={handleAddObject}
-                className="px-4 py-2 bg-black text-white rounded-md font-medium hover:bg-gray-800"
-              >
-                Add
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
